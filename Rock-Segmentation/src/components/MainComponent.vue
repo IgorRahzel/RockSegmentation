@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     handlePageChange() {
-      this.atFirstPage = !this.atFirstPage; // Hide FirstPage and show videos
+      this.atFirstPage = !this.atFirstPage; 
     },
     updateTime() {
       this.currentTime = new Date().toLocaleTimeString(); // Atualiza o horário a cada segundo
@@ -62,15 +62,15 @@ export default {
 
 <style scoped>
 .title {
-  font-size: 3rem; /* Large text */
-  color: #FFFAF3; /* Cream color */
-  text-align: center; /* Center the text horizontally */
-  font-weight: bold; /* Make it bold */
-  position: absolute; /* Absolute positioning to place it at the top */
-  top: 0px; /* Adjust the distance from the top */
-  left: 50%; /* Center horizontally */
-  transform: translateX(-50%); /* Fine-tunes the centering */
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Optional: Add shadow for effect */
+  font-size: 3rem; 
+  color: #FFFAF3; 
+  text-align: center; 
+  font-weight: bold; 
+  position: absolute; 
+  top: 0px; 
+  left: 50%; 
+  transform: translateX(-50%); 
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); 
 }
 
 .time-display {
@@ -92,17 +92,16 @@ export default {
 }
 
 
-/* Add relative positioning to the parent container */
 div[v-else] {
   position: relative;
-  min-height: 100vh; /* Ensures the container covers the entire viewport */
+  min-height: 100vh; 
 }
 
 .ExitButton {
-  position: absolute; /* Absolute position inside the parent */
-  bottom: 10px; /* Position it near the bottom */
-  left: 50%; /* Horizontally center */
-  transform: translateX(-50%); /* Fine-tunes the centering */
+  position: absolute; 
+  bottom: 10px; 
+  left: 50%; 
+  transform: translateX(-50%); 
 }
 
 .segmented-video {
@@ -110,18 +109,17 @@ div[v-else] {
   top: 50%;
   left: 35%;
   transform: translate(-50%, -50%);
-  width: 70%; /* Adjust width as needed */
-  max-width: 800px; /* Maximum width */
+  width: 70%; 
+  max-width: 800px; 
 }
 
-/* Masked Video (Smaller and in Upper-Right Corner) */
 .masked-video {
   position: absolute;
-  top: 65px; /* Adjust distance from the top */
-  right: 280px; /* Adjust distance from the right */
-  width: 300px; /* Reduce width */
-  max-width: 300px; /* Define a reasonable max width */
-  height: auto; /* Maintain aspect ratio */
+  top: 65px; 
+  right: 280px; 
+  width: 300px; 
+  max-width: 300px; 
+  height: auto; 
 } 
 
 .area-display {

@@ -2,7 +2,7 @@
 export default {
   data() {
     return {
-      segmentedVideoUrl: 'http://127.0.0.1:5000/video/mask', // Flask route for segmented video frames
+      segmentedVideoUrl: 'http://127.0.0.1:5000/video/mask',
     };
   },
 };
@@ -13,7 +13,6 @@ export default {
     <h2 class="title">
       Mascára
     </h2>
-    <!-- Dynamically bind the segmented video URL to the src -->
     <img :src="segmentedVideoUrl" alt="Masked Segementation" class="masked"/>
   </div>
 </template>
