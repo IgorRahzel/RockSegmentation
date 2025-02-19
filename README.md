@@ -8,111 +8,95 @@ Este projeto utiliza a YOLOv8 para a tarefa de segmentação de pedras claras em
 
 # Tabela de Conteúdos
 
-# Extrutura do Projeto:
+# Estrutura do Projeto:
 ```bash
 Yolov8
-├── alertas                            # Pasta contendo os alertas
-│   ├── pessoasSemCapacete             # Pasta para salvar os alertas de pessoas sem capacete
-│   │   └── alertas.log                # Arquivo de alertas.log para pessoas sem capacete
-│   └── veiculos                       # Pasta contendo os alertas para os veículos
-│       └── alertas.log                # Arquivo alerta.log para os veículos
-├── ch5-cut.mp4                        # vídeo onde é feita a inferência
-├── imgs                               # Pasta onde são salvas as imagens
-│   ├── PessoasSemCapacete             # Pasta para imagens das pessoas sem capacete
-│   │   ├── pessoa_3.png               
-│   └── Veiculos                       # Pasta para as imagens dos veículos
-│       ├── veiculo_1.png
+├── BackEnd                            # Pasta com os componentes backend do projeto
+│   ├── app.py                         # Arquivo que realiza a segmentação com a YOLOv8 e cria rotas utilizando o Flask para comunicar com o Vue3
+│   │                  
+│   └── model                          # Pasta contendo os modelos treinados da YOLOv8 treinados em datasets customizados para segmentação
+│       └── best_segment.pt            # Modelo treinado utilizado
 │
-├── model                              # Pasta onde são salvos os arquivos contendo os pesos da YOLOv8
-│   └── best.pt                        # Pesos da YOLOv8
-├── requirements.txt                   # bibliotecas utilizadas
+├── RockSegmentation                   # Pasta com os componentes frontend do projeto
+│   ├── src
+│   │     ├── components                       # Pasta com os componentes que geram a interface
+│   │          └── Area.vue                    # Mostra a área segmentada
+│   │          └── FirstPage.vue               # Mostra a tela inicial
+│   │          └── MainButton.vue              # Botão para navegar entre as páginas 
+│   │          └── MaskedSegmentation.vue      # Mostra a máscara da segmentação
+│   │          └── SegmentedRocks.vue          # Mostra o vídeo segmentado
+│   │          └── MainComponent.vue           # Arquivo que agreaga os demais componentes
+│   │
+│   ├──  App.vue    # Arquivo que gera a interface
+│   │ 
+│   ├── ...                     # Demais arquivos gerados pelo Vue3
 │
 │
-├── video_results                      # Pasta para salvar vídeos gerados
-│   └── video_output_wpp.mp4           # Video de 1 minuto com os resultado
-│   
+├── requirements.txt                   # dependências utilizadas
+│
 ├── reademe_imgs                       # Pasta para salvar imagens utilizadas no README
 │
-├── .gitignore                         # Arquivos não necessários
-│  
 ├── README.md                          # Documentação
-└── src                                # Arquivos .py
-    ├── BaseObject.py                  # Classe base para as classes vehicle e worker
-    ├── main.py                        # arquivo principal
-    ├── vehicle.py                     # Classe utilizada na detecção dos veículos
-    ├── videoAnalyzer.py               # Classe utilizada para para salvar as imagens e gerar alertas
-    └── worker.py                      # Classe utiilizada na detecção das pessoas/funcionários
 
 ```
 
 # Como Executar
 
 1. **Instalar as dependências:**
-   Inicialmente certifique-se de que as dependências necessárias foram instaladas, isso pode ser feito executando o seguinte comando:
+    - Inicialmente certifique-se de que as dependências necessárias foram instaladas, isso pode ser feito executando o seguinte comando:
 
-   ```bash
-   pip install -r requirements.txt
-   ```
-2. **Navegue até a pasta do projeto:**
-     A partir da pasta do projeto execute o comando:
+       ```bash
+       pip install -r requirements.txt
+       ```
+    - Também é necessário instalar o `Node.js` para poder acessar a interface, isso pode ser feito seguindo o tutorial no link:
+        [Instalação do Node.js](https://www.alura.com.br/artigos/como-instalar-node-js-windows-linux-macos#como-instalar-o-node.js)
+   
+2. **Execução do projeto:**
+    - Execute o arquivo `app.py` na pasta BackEnd, então verifique se as rotas foram criadas corretamente:
+      1. http://127.0.0.1:5000/video/mask
+      2. http://127.0.0.1:5000/video/segmented
+      3. http://127.0.0.1:5000/video/area
+
+   - Navegue para a pasta RockSegmentation e execute o comando:
      ```bash
-     python main.py
+     npm run dev
      ```
-3. **Saída:**
-   - O vídeo será exibido
-   - Nele serão mostradas as detecções dos objetos das classes *capacete*,*pessoa* e *veículo*
-   - As detecções iram gerar os alertas nos seus devidos arquivos alertas.log além de salvar as imagens
+     Isso criará o servidor local com a interface
+      
+   
+4. **Interface:**
+   - Clique no botão Visualizar Esteira
+   - Aguarde alguns segundos
+   - Serão exibidas duas janelas, uma contendo o vídeo segmentado, outra contendo a máscara da segmentação, abaixo dessa também será informada a área segmentada em pixels 
 
 
 # Funcionamento do Código:
-Nesta seção iremos abordar sobre o funcionamento do código. Inicialmente trataremos das classes auxiliares coomo `BaseObject`,`worker` e `vehicle`, então iremos tratar da classe principal,'videoAnalyzer ' utilizada para a detecção e geração dos alertas, por fim mostraremos o fluxo do arquivo principal `main.py`.
+Nesta seção iremos apresentar a ideia por trás dos componentes backend e frontend que compôem o código
 
-## Classes Auxiliares
+## Backend
+O backend é constituído exclusivamente do arquivo app.py
 
-**1. BaseObject**: Implementa a estrutura principal dos objetos detectados à serem herdados pelas classes `worker` e `vehicle`. 
-Nela são criados os atributos:
-- *id* ➡️ Salva id do objeto
-- *bbox_history* ➡️ armazena coordenadas da bounding box do objeto
-- *last_frame_seen* ➡️ número do último frame em que o objeto foi visto
-- *frame* ➡️ imagem do objeto detectado
-- *frame_timestamp* ➡️ timestamp da detecção
+**app.py:**  Nesse arquivo são inicialmente definidos os caminhos para o caminho do modelo e também do vídeo que desaja-se aplicar a segmentação, tais caminhos são armazenados pelas variávies *model_path* e *video_path*, em segudida é inicializado o modelo da *YOLO* com os pesos informados. O app.py tem três objetivos principais: aplicar a segmentação no vídeo, extrair a máscara da segmentação, calcular a área segmentada. Abaixo vamos discutir o funcionamento das funções utilizadas:
 
-Um único método é implementado por essa classe, sendo ele `add_detection()`, o qual recebe como parâmetros *bbox*, que contém as tuplas da bounding box, e *frame_id* contendo o número do frame em que o objeto foi detectado. Esses parâmetros são adicionados à lista *bbox_history* e atualizada como *last_frame_seen* respectivamente.
+- `get_mask(frame):` Recebe o frame atual do vídeo e então retorna uma máscara binária indicando os pixeis do vídeo que foram segmentados
+- `segmented_frames(frame, model):` Faz uma chamada para a função acima, cria uma imagem da cor rosa e então aplica a segmentação aos pixeis do frame que tem valor igual a 1 na mascára
+- `segmented_mask(frame_model):` Também realiza uma chamada para `get_mask()` e então multiplica os valores da máscara por 255, de modo a transformar o pixeis com valor 1 em 255, ou seja, na cor branca. Além disso é calculada a área segmentada, isso é feito calculando o número de pixels com valor igual a 255.
+- `read_video(video_path, model)`: Essa função processa cada um dos frames do vídeo cujo caminho foi armazenado pela variável *video_path*, para cada um dos frames é feita uma chamada para as funções `segmented_frames()` e `segmented_mask`, retornando assim o frame segmentado, a máscara da segmentação e área da mesma.
+- As funções: `generate_segmented_masks()`, `generate_segmented_frames()` e `generate_area()` compartilham da mesma lógica e basicamente geram uma stream de dados que será utilizada em uma das rotas criadas pelo **Flask**
+- Já as funões `video_segmented()`, `video_mask()` e `video_area()` são decoradas com `@app.route('/video/...')` de modo a criar um endpoint para cada tipo de fluxo de dados. Quando o frontend faz uma requisição para essas rotas, o Flask executa as funções associadas e retorna o conteúdo gerado pelas funções `generate_segmented_frames()`, `generate_segmented_masks()` e `generate_area()`.
 
-**2. vehicle**: A classe `vehicle` apenas herda de `BaseObject`, nela não são feitas nenhuma alterações quanta aos atributos utilizados e ao método herdado.
+## Frontend
+Nos arquivos do frontend iremos abordar apenas aqueles em *RockSegmentation/src/components*, pois os demais são gerados na criação do projeto utilizando o Vue3 e não forma alterados
 
-**3. worker**: A classe `worker`também herda de `BaseObject`, no entanto adiciona o atributo *helmet_status_history* que é uma lista booleana indicando se a pessoa estava ou não utilizando o EPI durante o seu histórico de detecção, consequentemente o método `add_detection()` é acrescido da váriavel *helmet_status* que é um booleano indicando o uso do capacete e este é adicionado à lista mencionada previamente.
+**1. Area.vue:** Esse componente é responsável por exibir a área segmentada de forma dinâmica. Isso é feito através da leitura contínua dos dados de área enviados pelo servidor local.
 
-## Classe videoAnalyzer
-Essa classe tem como atributos:
+**2. FirstPage.vue:**  Página Incial que permite navegar para a página onde são exibidos os vídeos
 
-- *object_type* ➡️ string contendo o tipo do objeto a ser detectado: *pessoa* ou *veículo*
-- people ➡️ dicionário utilizado para armazenar as pessoas
-- automobile ➡️ dicionário utilizado para armazenar os automóveis
-- vehicle_id ➡️ id contendo dos veículos detectados, inicializado como 1
-- person_id ➡️ id contendo das pessoas, inicializado como 1
+**3. MainButton.vue:** Botão para navegar entre a página inicial e página que exibe os vídeos
 
-Os métodos utilizados são os seguintes:
+**4. MaskedSegmentation.vue:** Nessa página são capturados os frames da máscara de segmentação enviados ao servidor local pelo Flask, a cada novo frame enviado a imagem é atualizada automaticamente.
 
-- `_get_roi(frame,coordenadas)` ➡️ utilizado para extrair a imagem do objeto detectado de um frame. Os parâmetros *frame* e *coordenadas* se referem ao frame utilizado para extrair a imagem e as coordenadas do bounding box respectivamente.
-- `_log_alerts(alert_type, obj_id, timestamp, alert_path)` ➡️ Gera alertas nos arquivos de alertas.log, *alert_type* é uma string *veículo* ou *pessoa*,*obj_id* é o id do objeto, *timestamp* é a timestamp da detecção e *alert_path* é o endereço do arquivo onde será emitido o alerta.
-- `_save_imgs(dir_path, img_name, img)` ➡️ Salva as imagens dos objetos detectados, *dir_path* é o diretório onde a imagem será salva, *img_name* é o nome utilizado para salvar a imagem e *img* é a imagem a ser salva.
-- `_object_analysis(self, frame, results, current_frame, timestamp, object_type, storage_dict, object_class, id_counter, threshold, check_helmet=False)` ➡️ Este método é responsável por analisar objetos detectados em um frame, associá-los a objetos previamente rastreados ou criar novas instâncias, e atualizar suas informações, como bounding boxes, timestamps e imagens extraídas. Ele também verifica a presença de capacetes em pessoas, caso solicitado. Os parâmetros são:
-   Os parâmetros são:  
-  - *frame*: O frame atual da análise, usado para extrair regiões de interesse (ROIs) dos objetos detectados.
-  - *results*: Resultado da detecção, contendo as bounding boxes e classes dos objetos detectados no frame.
-  - *current_frame*: O índice ou identificador do frame atual (por exemplo, número do frame no vídeo).
-  - *timestamp*: Timestamp associado ao frame atual, indicando o momento da detecção.
-  - *object_type*: O tipo de objeto a ser analisado (ex.: "pessoa" ou "veículo").
-  - *storage_dict*: Dicionário usado para armazenar e rastrear objetos detectados, mapeando IDs únicos para instâncias de objetos.
-  - *object_class*: A classe utilizada para criar novas instâncias de objetos (ex.: `worker` ou `vehicle`).
-  - *id_counter*: Lista que mantém um contador global para atribuir IDs únicos a novos objetos detectados.
-  - *threshold*: Distância máxima permitida para associar um objeto detectado a um objeto existente, com base na posição de seus centroids.
-  - *check_helmet*: Booleano indicando se irá ser feita a verificação de capacete ou não no objeto
-- `video_analysis(self,frame,results,current_frame,timestamp)` ➡️  Realiza uma chamada para o métdo `_object_analysis` adaptando-o para o caso em que deseja-se detectar um veículo ou uma pessoa.
-- `create_obj_alert(self,current_frame,storage_dict)` ➡️  Cria alerta para o objeto, tem como parâmetros *current_frame* que indica o frame atual e *storage_dict* que dicionário usado para armazenar e rastrear objetos detectados, mapeando IDs únicos para instâncias de objetos. Remove os objetos do dicionário que não foram vistos no últioms 30 frames. No caso em que o objeto é uma pessoa verifica se a razão entre o total de frames que a pessoa foi detectada e o número de vezes que ela apareceu sem o capacete é maior que um thresholdld, caso seja o alerta é emitido. No caso em que o objeto é um veículo o alerta é emitido diretamente.
-- `create_alert(self,current_frame)` ➡️ Faz chamada para `create_obj_alert()` de acordo com o tipo do objeto
+**5. SegmentedRocks.vue:** Semelhante ao componente anterior, porém os frames são referentes ao vídeo segmentado.
 
-## Arquivo principal
-No arquivo `main.py` é importada a rede YOLOv8, a qual é carregado utilizando os pesos disponíveis no diretório `model`, também são criadas duas instâncias da classe `videoAnalyzer`, uma para a detecção de pessoas sem capacete e a outra para a detecção de veículos. Em seguida é feito processamento frame a frame do vídeo, é então extraída uma ROI de cada frame para limitar a região onde as detecções são realizadas ,cada frame é enviado para a YOLO, a partir dos resultados retornados pela rede é feito o salvamento de imagens e geração dos logs nos arquivos de alertas através do uso do método `video_analysis` presente em cada uma das instâncias de `videoAnalyzer` criadas anteriormente.
-# RockSegmentation
+**6. MainComponent.vue:** Itegra todos os demais componentes, de modo a organizar o conteúdo a ser exibido.
+

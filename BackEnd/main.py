@@ -45,30 +45,22 @@ while cap.isOpened():
     if masks.shape[0] > 0:  # Ensure at least one detection exists
         # Combinar todas as máscaras em uma única binária
         combined_mask = torch.any(masks, dim=0).int().cpu().numpy()  # Convert para NumPy
-        print(f'combined_mask.shape: {combined_mask.shape}')
+        print(f'Combined Mask Shape: {combined_mask.shape}')
+
+        # Converter frame para GrayScale
+        frame_gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+        frame_gray = cv2.resize(frame_gray,(640,384))
+        print(f'Frame Gray Shape: {frame_gray.shape}')
         print(np.unique(combined_mask))
-
-        bin_mask = combined_mask.astype(np.uint8)
-        print(f'bin_mask.shape: {bin_mask.shape}')
-        bin_mask = cv2.resize(bin_mask,(640,480))
-        frame = cv2.resize(frame, (640, 480))
-        print(f"Unique:{np.unique(bin_mask)}")
-
-        # Colored frame overlay
-        colored_frame = np.zeros_like(frame)
-        colored_frame[:,:] = (255,0,255)
-        alpha = 0.5
-        bin_mask = bin_mask.astype(bool)
-        frame[bin_mask] = cv2.addWeighted(frame, alpha, colored_frame, 1 - alpha, 0.0)[bin_mask]
-
+        combined_mask = combined_mask.astype(np.uint8)
+        imageInMask = combined_mask * frame_gray
+        cv2.imwrite(f'output_image_in_mask_{count}.png',imageInMask)
         # Adiciona o frame processado ao vídeo de saída
-        out.write(frame)
+        #out.write(frame)
 
         #print(f'Processed Frame {count}')
 
-        count += 1
-        if count >= frames_to_capture:
-            break  # Stop after capturing 15 seconds of frames
+        break  # Stop after capturing 15 seconds of frames
 
 # Cleanup
 cap.release()

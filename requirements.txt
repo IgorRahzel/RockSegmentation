@@ -1,0 +1,6 @@
+Flask==2.2.2
+ultralytics==8.3.61
+numpy==1.24.4
+opencv-python==4.11.0.86
+torch==2.5.1
+flask-cors==5.0.0
