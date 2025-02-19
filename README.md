@@ -108,8 +108,8 @@ Nos arquivos do frontend iremos abordar apenas aqueles em *RockSegmentation/src/
 
 **6. MainComponent.vue:** Itegra todos os demais componentes, de modo a organizar o conteúdo a ser exibido.
 
-![Página Inicial](./readme_imgs/img1.png)  
+<img src="./readme_imgs/img1.png" alt="Página Inicial" width="700">
+<img src="./readme_imgs/img2.png" alt="Página Secundária" width="700">
 
-![Página Secundária](./readme_imgs/img2.png)  
 
 
