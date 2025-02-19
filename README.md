@@ -29,7 +29,10 @@ Yolov8
 │   ├── ...                     # Demais arquivos gerados pelo Vue3
 │
 │
-├── requirements.txt                   # dependências utilizadas
+├── results
+│     └── output_video_with_mask.mp4   # Video mostrando os resultados 
+│
+├── requirements.txt                   # Dependências utilizadas
 │
 ├── reademe_imgs                       # Pasta para salvar imagens utilizadas no README
 │
