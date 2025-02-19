@@ -73,6 +73,7 @@ def read_video(video_path, model):
 
         cv2.imwrite('segmented_frame.jpg', segmented_frame)
         cv2.imwrite('segmented_mask_frame.jpg', segmented_mask_frame)
+        frame = cv2.resize(frame, (640, 480))
         cv2.imwrite('frame.jpg', frame)
 
         break
