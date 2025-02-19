@@ -1,7 +1,7 @@
 # RockSegmentation
 
 
-![Demo of the project](./readme_imgs/output_video.gif)
+![Demo of the project](./readme_imgs/output.gif)
 
 
 Este projeto utiliza a YOLOv8 para a tarefa de segmentação de pedras claras em uma esteira transportadora de mineração, além disso também foi implementada uma interface utilizando o Vue3.
