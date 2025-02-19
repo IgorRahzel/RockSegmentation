@@ -1,10 +1,7 @@
 # RockSegmentation
-
+Este projeto utiliza a YOLOv8 para a tarefa de segmentação de pedras claras em uma esteira transportadora de mineração, além disso também foi implementada uma interface utilizando o Vue3.
 
 ![Demo of the project](./readme_imgs/output.gif)
-
-
-Este projeto utiliza a YOLOv8 para a tarefa de segmentação de pedras claras em uma esteira transportadora de mineração, além disso também foi implementada uma interface utilizando o Vue3.
 
 # Tabela de Conteúdos
 
@@ -80,7 +77,13 @@ O backend é constituído exclusivamente do arquivo app.py
 
 - `get_mask(frame):` Recebe o frame atual do vídeo e então retorna uma máscara binária indicando os pixeis do vídeo que foram segmentados
 - `segmented_frames(frame, model):` Faz uma chamada para a função acima, cria uma imagem da cor rosa e então aplica a segmentação aos pixeis do frame que tem valor igual a 1 na mascára
+
+![Demo of the project](./readme_imgs/segmented_frame.jpg)   ![Demo of the project](./readme_imgs/frame.jpg)
+
 - `segmented_mask(frame_model):` Também realiza uma chamada para `get_mask()` e então multiplica os valores da máscara por 255, de modo a transformar o pixeis com valor 1 em 255, ou seja, na cor branca. Além disso é calculada a área segmentada, isso é feito calculando o número de pixels com valor igual a 255.
+
+![Demo of the project](./readme_imgs/segmented_mask_frame.jpg)   ![Demo of the project](./readme_imgs/frame.jpg)
+
 - `read_video(video_path, model)`: Essa função processa cada um dos frames do vídeo cujo caminho foi armazenado pela variável *video_path*, para cada um dos frames é feita uma chamada para as funções `segmented_frames()` e `segmented_mask`, retornando assim o frame segmentado, a máscara da segmentação e área da mesma.
 - As funções: `generate_segmented_masks()`, `generate_segmented_frames()` e `generate_area()` compartilham da mesma lógica e basicamente geram uma stream de dados que será utilizada em uma das rotas criadas pelo **Flask**
 - Já as funões `video_segmented()`, `video_mask()` e `video_area()` são decoradas com `@app.route('/video/...')` de modo a criar um endpoint para cada tipo de fluxo de dados. Quando o frontend faz uma requisição para essas rotas, o Flask executa as funções associadas e retorna o conteúdo gerado pelas funções `generate_segmented_frames()`, `generate_segmented_masks()` e `generate_area()`.
